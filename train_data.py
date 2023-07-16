@@ -121,9 +121,12 @@ class TrainTxt(ATrainData):
         if thd != -1:
             rows = self.format_new_rows(rows, thd=thd)
         data = Dataset.from_dict({"input": rows})
-        data = data.shuffle().map(lambda x: self.tokenize(x["input"], use_eos_token=use_eos_token))
-        print('Train Data: {:.2f}%'.format(self.exceed_count / len(data) * 100), 'outliers')
-        self.train_data = data
+        data = data.train_test_split(test_size=self.val_set_size, shuffle=True, seed=42)
+        train_data = data['train'].shuffle().map(lambda x: self.tokenize(x["input"], use_eos_token=use_eos_token))
+        val_data = data['test'].shuffle().map(lambda x: self.tokenize(x["input"], use_eos_token=use_eos_token))
+        print('Train Data: {:.2f}%'.format(self.exceed_count / len(train_data) * 100), 'outliers')
+        self.train_data = train_data
+        self.val_data = val_data
 
 
 # Stanford Alpaca-like Data
@@ -188,6 +191,24 @@ class TrainSAD(ATrainData):
     def generate_and_tokenize_prompt(self, data_point, **kwargs):
         prompt = self.generate_prompt(data_point, **kwargs)
         return self.tokenize(prompt, **kwargs)
+    
+
+
+# Stanford Alpaca-like Data
+class TrainWizard(TrainSAD):
+    def __init__(self, dataset: str, val_set_size: int, tokenizer, cutoff_len) -> None:
+        super().__init__(dataset, val_set_size, tokenizer, cutoff_len)
+
+    # Auxiliary methods
+    def generate_prompt(self, data_point, **kwargs):
+        return "{0}\n{1}{2}\n{3}{4}".format(
+            "A chat between a curious user and an artificial intelligence assistant.\nThe assistant gives helpful, detailed, and polite answers to the user's questions.",
+            "USER: ",
+            data_point["instruction"],
+            "ASSISTANT: ",
+            data_point["output"]
+        )
+
     
 # Blue Moon like Data prompt-response
 class TrainBlueMoon(ATrainData):
