@@ -1,9 +1,9 @@
 #!/bin/bash
-accelerate launch --num_processes 2 finetune.py ./data/qa_dataset/ald.json \
+accelerate launch --num_processes 4 finetune.py data/qa_dataset/ald.json \
     --ds_type=wizard30b \
-    --lora_out_dir=./trained_loras/ald_batchsize128_qlora-8-16_cutoff384_epochs2_wizard30b \
+    --lora_out_dir=./trained_loras/ald_batchsize128_qlora-8-16_cutoff384_epochs2_wizard30b_uncensored \
     --llama_q4_config_dir=/workspace/text-generation-webui/models/TheBloke_WizardLM-30B-Uncensored-GPTQ \
-    --llama_q4_model=/workspace/text-generation-webui/models/TheBloke_WizardLM-30B-GPTQ/WizardLM-30B-Uncensored-GPTQ-4bit--1g.act.order.safetensors \
+    --llama_q4_model=/workspace/text-generation-webui/models/TheBloke_WizardLM-30B-Uncensored-GPTQ/WizardLM-30B-Uncensored-GPTQ-4bit--1g.act.order.safetensors \
     --mbatch_size=1 \
     --batch_size=128 \
     --epochs=2 \
