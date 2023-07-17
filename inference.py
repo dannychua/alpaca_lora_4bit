@@ -27,7 +27,7 @@ replace_peft_model_with_gptq_lora_model()
 
 config_path = "/mnt/md0/text-generation-webui/models/TheBloke_WizardLM-30B-GPTQ"
 model_path = "/mnt/md0/text-generation-webui/models/TheBloke_WizardLM-30B-GPTQ/wizardlm-30b-GPTQ-4bit.act.order.safetensors"
-lora_path = "./trained_loras/ald_batchsize128_qlora-8-16_cutoff384_epochs2_wizard30b/checkpoint-164"
+lora_path = "./trained_loras/ald_batchsize128_qlora-8-16_cutoff384_epochs2_wizard30b/checkpoint-160"
 model, tokenizer = load_llama_model_4bit_low_ram_and_offload(
     config_path, model_path, lora_path=lora_path, groupsize=-1
 )
@@ -47,7 +47,13 @@ from amp_wrapper import AMPWrapper
 wrapper = AMPWrapper(model)
 wrapper.apply_generate()
 
-prompt = """I think the meaning of life is"""
+# prompt = """I think the meaning of life is"""
+# prompt = """Ga2O3 is a good buffer layer for"""
+prompt = "{}\n{}{}".format(
+    "A chat between a curious user and an artificial intelligence assistant.\nThe assistant gives helpful, detailed, and polite answers to the user's questions.",
+    "USER: ",
+    "What is the advantage of ALD deposition?"
+)
 batch = tokenizer(prompt, return_tensors="pt", add_special_tokens=False)
 batch = {k: v.cuda() for k, v in batch.items()}
 
@@ -58,7 +64,7 @@ with torch.no_grad():
         do_sample=True,
         use_cache=True,
         repetition_penalty=1.1,
-        max_new_tokens=20,
+        max_new_tokens=1536,
         temperature=0.9,
         top_p=0.95,
         top_k=40,
