@@ -240,6 +240,22 @@ class TrainAiroboros(TrainSAD):
             "ASSISTANT: ",
             data_point["output"]
         )
+        
+# LLaMA-2 Data
+# https://huggingface.co/TheBloke/airoboros-33B-gpt4-1.4-GPTQ
+class TrainLlama2(TrainSAD):
+    def __init__(self, dataset: str, val_set_size: int, tokenizer, cutoff_len) -> None:
+        super().__init__(dataset, val_set_size, tokenizer, cutoff_len)
+
+    # Auxiliary methods
+    def generate_prompt(self, data_point, **kwargs):
+        return "{}\n{}{}\n{}{}".format(
+            "System: You are a helpful, respectful and honest assistant. Always answer as helpfully as possible, while being safe.  Your answers should not include any harmful, unethical, racist, sexist, toxic, dangerous, or illegal content. Please ensure that your responses are socially unbiased and positive in nature. If a question does not make any sense, or is not factually coherent, explain why instead of answering something not correct. If you don't know the answer to a question, please don't share false information.",
+            "User: ",
+            data_point["instruction"],
+            "Assistant: ",
+            data_point["output"]
+        )
 
     
 # Blue Moon like Data prompt-response

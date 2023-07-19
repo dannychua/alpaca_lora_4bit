@@ -122,6 +122,9 @@ if not ft_config.skip:
     elif ft_config.ds_type == "airoboros" and not ft_config.skip:
         #### Airoboros Data
         data = train_data.TrainAiroboros(ft_config.dataset, ft_config.val_set_size, tokenizer, ft_config.cutoff_len)
+    elif ft_config.ds_type == "llama2" and not ft_config.skip:
+        #### LLaMA-2 Data
+        data = train_data.TrainLlama2(ft_config.dataset, ft_config.val_set_size, tokenizer, ft_config.cutoff_len)
     elif ft_config.ds_type == "gpt4all" and not ft_config.skip:
         #### GPT4All Data
         data = train_data.TrainGPT4All(ft_config.dataset, ft_config.val_set_size, tokenizer, ft_config.cutoff_len)
