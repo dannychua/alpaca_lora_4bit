@@ -116,6 +116,12 @@ if not ft_config.skip:
     elif ft_config.ds_type == "wizard30b" and not ft_config.skip:
         #### WizardLM 30B V1.0 Data
         data = train_data.TrainWizard(ft_config.dataset, ft_config.val_set_size, tokenizer, ft_config.cutoff_len)
+    elif ft_config.ds_type == "wizard30b_uncensored" and not ft_config.skip:
+        #### WizardLM Uncensored Data
+        data = train_data.TrainWizardUncensored(ft_config.dataset, ft_config.val_set_size, tokenizer, ft_config.cutoff_len)
+    elif ft_config.ds_type == "airoboros" and not ft_config.skip:
+        #### Airoboros Data
+        data = train_data.TrainAiroboros(ft_config.dataset, ft_config.val_set_size, tokenizer, ft_config.cutoff_len)
     elif ft_config.ds_type == "gpt4all" and not ft_config.skip:
         #### GPT4All Data
         data = train_data.TrainGPT4All(ft_config.dataset, ft_config.val_set_size, tokenizer, ft_config.cutoff_len)
@@ -152,10 +158,12 @@ if not ft_config.skip:
         per_device_train_batch_size=ft_config.mbatch_size,
         gradient_accumulation_steps=ft_config.gradient_accumulation_steps,
         warmup_steps=ft_config.warmup_steps,
-        optim="adamw_torch",
+        # optim="adamw_torch",
+        optim="paged_adamw_8bit",
         num_train_epochs=ft_config.epochs,
         learning_rate=ft_config.lr,
-        fp16=True,
+        # fp16=True,
+        bf16=True,
         logging_steps=ft_config.logging_steps,
         evaluation_strategy="steps" if eval_steps != 0 else "no",
         save_strategy="steps",
