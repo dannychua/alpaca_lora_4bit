@@ -257,6 +257,22 @@ class TrainLlama2(TrainSAD):
             data_point["output"]
         )
 
+
+# Redmond-Puffin Data
+# https://huggingface.co/TheBloke/Redmond-Puffin-13B-GPTQ
+class TrainPuffin(TrainSAD):
+    def __init__(self, dataset: str, val_set_size: int, tokenizer, cutoff_len) -> None:
+        super().__init__(dataset, val_set_size, tokenizer, cutoff_len)
+
+    # Auxiliary methods
+    def generate_prompt(self, data_point, **kwargs):
+        return "{}{}\n{}{}".format(
+            "### human: ",
+            data_point["instruction"],
+            "### response:",
+            data_point["output"]
+        )
+
     
 # Blue Moon like Data prompt-response
 class TrainBlueMoon(ATrainData):
